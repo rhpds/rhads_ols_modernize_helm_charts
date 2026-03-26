@@ -1,0 +1,28 @@
+# Example values for MTA8 with API Route enabled
+# This enables direct access to the MTA Hub API without requiring OAuth
+
+# Deploy the API route
+apiRoute:
+  enabled: true
+  routeName: mta-api
+  serviceName: mta-hub
+  targetPort: api
+
+# Disable authentication for API access
+tackleInstance:
+  featureAuthRequired: false
+  kaiSolutionServerEnabled: true
+  kaiLlmProvider: openai
+  kaiLlmModel: llama-scout-17b
+  hubBucketVolumeSize: 10Gi
+  hubDatabaseVolumeSize: 5Gi
+  keycloakDatabaseDataVolumeSize: 1Gi
+  mavenDataVolumeSize: 10Gi
+  pathfinderDatabaseDataVolumeSize: 1Gi
+  rwxSupported: false
+  rwoStorageClass: ocs-external-storagecluster-ceph-rbd
+  rwxStorageClass: ocs-external-storagecluster-ceph-rbd
+
+# OAuth proxy disabled when using direct API route
+oauthProxy:
+  enabled: false

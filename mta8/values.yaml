@@ -51,6 +51,14 @@ oauthProxy:
       cpu: 500m
       memory: 256Mi
 
+# API Route Configuration
+# Deploy a direct route to the MTA Hub API (without OAuth proxy)
+apiRoute:
+  enabled: false
+  routeName: mta-api
+  serviceName: mta-hub
+  targetPort: api
+
 # Settings for the Tackle instance
 # if rwx_supported: false make sure to set
 # the storage class variables to proper values
