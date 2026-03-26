@@ -8,15 +8,31 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
+{{- if .Values.tackleInstance.externalKeycloakEnabled }}
+  # External Keycloak mode - disable embedded Keycloak and use OIDC
+  feature_auth_required: true
+  hub_keycloak_external: true
+  hub_oidc_provider: keycloak
+  hub_oidc_issuer_url: "{{ .Values.tackleInstance.externalKeycloakUrl }}/realms/{{ .Values.tackleInstance.externalKeycloakRealm }}"
+  hub_oidc_client_id: "{{ .Values.tackleInstance.externalKeycloakClientId }}"
+{{- if .Values.tackleInstance.externalKeycloakClientSecret }}
+  hub_oidc_client_secret: "{{ .Values.tackleInstance.externalKeycloakClientSecret }}"
+{{- end }}
+{{- else }}
+  # Embedded Keycloak or no auth
+  feature_auth_required: {{ .Values.tackleInstance.featureAuthRequired }}
+{{- if .Values.tackleInstance.featureAuthRequired }}
+  # Only include Keycloak database storage if using embedded Keycloak
+  keycloak_database_data_volume_size: {{ .Values.tackleInstance.keycloakDatabaseDataVolumeSize }}
+{{- end }}
+{{- end }}
   kai_solution_server_enabled: {{ .Values.tackleInstance.kaiSolutionServerEnabled }}
 {{- if .Values.tackleInstance.kaiSolutionServerEnabled }}
   kai_llm_provider: {{ .Values.tackleInstance.kaiLlmProvider }}
   kai_llm_model: {{ .Values.tackleInstance.kaiLlmModel }}
 {{- end }}
-  feature_auth_required: {{ .Values.tackleInstance.featureAuthRequired }}
   hub_bucket_volume_size: {{ .Values.tackleInstance.hubBucketVolumeSize }}
   hub_database_volume_size: {{ .Values.tackleInstance.hubDatabaseVolumeSize }}
-  keycloak_database_data_volume_size: {{ .Values.tackleInstance.keycloakDatabaseDataVolumeSize }}
   maven_data_volume_size: {{ .Values.tackleInstance.mavenDataVolumeSize }}
   pathfinder_database_data_volume_size: {{ .Values.tackleInstance.pathfinderDatabaseDataVolumeSize }}
   rwx_supported: {{ .Values.tackleInstance.rwxSupported }}

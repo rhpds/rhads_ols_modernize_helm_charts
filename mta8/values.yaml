@@ -37,10 +37,26 @@ tackleInstance:
   kaiSolutionServerEnabled: false
   kaiLlmProvider: openai
   kaiLlmModel: llama-scout-17b
+
+  # Authentication mode
+  # When false: No authentication
+  # When true without externalKeycloakEnabled: Uses MTA's embedded Keycloak
+  # When externalKeycloakEnabled: true: Uses external Keycloak/RHSSO
   featureAuthRequired: false
+
+  # External Keycloak/RHSSO Configuration
+  # Set externalKeycloakEnabled: true to use external Keycloak instead of embedded one
+  # These values are typically passed in from Ansible/ArgoCD Application
+  externalKeycloakEnabled: false
+  # externalKeycloakRealm: ""        # Passed from outside (e.g., Ansible)
+  # externalKeycloakUrl: ""          # Passed from outside (e.g., https://keycloak.apps.cluster.example.com)
+  # externalKeycloakClientId: ""     # Passed from outside (e.g., mta-client)
+  # externalKeycloakClientSecret: "" # Passed from outside (optional for public clients)
+
+  # Storage settings
   hubBucketVolumeSize: 10Gi
   hubDatabaseVolumeSize: 5Gi
-  keycloakDatabaseDataVolumeSize: 1Gi
+  keycloakDatabaseDataVolumeSize: 1Gi  # Only used when embedded Keycloak is deployed
   mavenDataVolumeSize: 10Gi
   pathfinderDatabaseDataVolumeSize: 1Gi
   rwxSupported: true
