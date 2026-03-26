@@ -1,0 +1,40 @@
+{{- if .Values.oauthProxy.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mta-ui-oauth-only
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mta.labels" . | nindent 4 }}
+    app.kubernetes.io/component: oauth-proxy
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: tackle-ui
+  policyTypes:
+  - Ingress
+  ingress:
+  # Allow traffic from OAuth proxy
+  - from:
+    - podSelector:
+        matchLabels:
+          app: {{ .Values.oauthProxy.deploymentName }}
+    ports:
+    - protocol: TCP
+      port: 8080
+  # Allow traffic from same namespace (for internal service communication)
+  - from:
+    - podSelector: {}
+    ports:
+    - protocol: TCP
+      port: 8080
+  # Allow traffic from OpenShift ingress/router
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          network.openshift.io/policy-group: ingress
+    ports:
+    - protocol: TCP
+      port: 8080
+{{- end }}

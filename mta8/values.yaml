@@ -29,6 +29,28 @@ tacklePassword: ""
 
 tackleUIServiceName: mta-ui
 
+# OAuth Proxy Configuration
+# Deploy OAuth proxy to provide OpenShift authentication without Keycloak
+oauthProxy:
+  enabled: false
+  image: quay.io/openshift/origin-oauth-proxy:4.14
+  routeName: mta-secure
+  serviceAccountName: mta-oauth-proxy
+  serviceName: mta-oauth-proxy
+  deploymentName: mta-oauth-proxy
+  secretName: mta-oauth-proxy-secret
+  tlsSecretName: mta-oauth-proxy-tls
+  # Enable RBAC check (requires users to have permissions on namespace)
+  enableRBAC: false
+  # Resource limits/requests
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
 # Settings for the Tackle instance
 # if rwx_supported: false make sure to set
 # the storage class variables to proper values

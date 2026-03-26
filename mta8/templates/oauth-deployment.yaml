@@ -1,0 +1,61 @@
+{{- if .Values.oauthProxy.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.oauthProxy.deploymentName }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mta.labels" . | nindent 4 }}
+    app.kubernetes.io/component: oauth-proxy
+    app: {{ .Values.oauthProxy.deploymentName }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.oauthProxy.deploymentName }}
+  template:
+    metadata:
+      labels:
+        {{- include "mta.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: oauth-proxy
+        app: {{ .Values.oauthProxy.deploymentName }}
+    spec:
+      serviceAccountName: {{ .Values.oauthProxy.serviceAccountName }}
+      containers:
+      - name: oauth-proxy
+        image: {{ .Values.oauthProxy.image }}
+        args:
+        - --provider=openshift
+        - --https-address=:8443
+        - --http-address=
+        - --upstream=http://{{ .Values.tackleUIServiceName }}:8080
+        - --tls-cert=/etc/tls/private/tls.crt
+        - --tls-key=/etc/tls/private/tls.key
+        - --cookie-secret-file=/etc/proxy/secrets/session-secret
+        - --openshift-service-account={{ .Values.oauthProxy.serviceAccountName }}
+        - --skip-provider-button
+{{- if .Values.oauthProxy.enableRBAC }}
+        - --openshift-sar={"namespace":"{{ .Release.Namespace }}","resource":"services","verb":"get"}
+{{- end }}
+        ports:
+        - containerPort: 8443
+          name: https
+          protocol: TCP
+        resources:
+{{ toYaml .Values.oauthProxy.resources | indent 10 }}
+        volumeMounts:
+        - mountPath: /etc/tls/private
+          name: tls
+        - mountPath: /etc/proxy/secrets
+          name: session-secret
+      volumes:
+      - name: tls
+        secret:
+          secretName: {{ .Values.oauthProxy.tlsSecretName }}
+          defaultMode: 420
+      - name: session-secret
+        secret:
+          secretName: {{ .Values.oauthProxy.secretName }}
+          defaultMode: 420
+{{- end }}

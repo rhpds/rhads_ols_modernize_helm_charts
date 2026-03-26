@@ -1,0 +1,23 @@
+{{- if .Values.oauthProxy.enabled }}
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ .Values.oauthProxy.routeName }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mta.labels" . | nindent 4 }}
+    app.kubernetes.io/component: oauth-proxy
+    app: {{ .Values.oauthProxy.deploymentName }}
+spec:
+  to:
+    kind: Service
+    name: {{ .Values.oauthProxy.serviceName }}
+    weight: 100
+  port:
+    targetPort: https
+  tls:
+    termination: reencrypt
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+{{- end }}

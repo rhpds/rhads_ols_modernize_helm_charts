@@ -1,0 +1,23 @@
+{{- if .Values.oauthProxy.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.oauthProxy.serviceName }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mta.labels" . | nindent 4 }}
+    app.kubernetes.io/component: oauth-proxy
+    app: {{ .Values.oauthProxy.deploymentName }}
+  annotations:
+    service.beta.openshift.io/serving-cert-secret-name: {{ .Values.oauthProxy.tlsSecretName }}
+spec:
+  ports:
+  - port: 8443
+    targetPort: 8443
+    name: https
+    protocol: TCP
+  selector:
+    app: {{ .Values.oauthProxy.deploymentName }}
+  type: ClusterIP
+{{- end }}
