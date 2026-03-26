@@ -14,6 +14,7 @@ spec:
   kai_llm_model: {{ .Values.tackleInstance.kaiLlmModel }}
 {{- end }}
   feature_auth_required: {{ .Values.tackleInstance.featureAuthRequired }}
+  feature_auth_type: {{ .Values.tackleInstance.featureAuthType | default "oauth" }}
   hub_bucket_volume_size: {{ .Values.tackleInstance.hubBucketVolumeSize }}
   hub_database_volume_size: {{ .Values.tackleInstance.hubDatabaseVolumeSize }}
   keycloak_database_data_volume_size: {{ .Values.tackleInstance.keycloakDatabaseDataVolumeSize }}

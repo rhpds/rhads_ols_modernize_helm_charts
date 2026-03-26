@@ -38,6 +38,12 @@ tackleInstance:
   kaiLlmProvider: openai
   kaiLlmModel: llama-scout-17b
   featureAuthRequired: false
+  # featureAuthType controls how MTA authenticates users when featureAuthRequired is true.
+  # oauth  - Uses OpenShift OAuth proxy backed by the cluster's identity provider (no per-user
+  #          Keycloak deployed). Recommended on RHDP clusters where a shared RHBK already exists.
+  # keycloak - MTA operator deploys a dedicated Keycloak (RHBK) per MTA instance. Avoid in
+  #            multi-user labs -- one Keycloak per user wastes significant cluster resources.
+  featureAuthType: oauth
   hubBucketVolumeSize: 10Gi
   hubDatabaseVolumeSize: 5Gi
   keycloakDatabaseDataVolumeSize: 1Gi
