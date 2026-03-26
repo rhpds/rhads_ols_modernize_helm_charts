@@ -35,7 +35,7 @@ spec:
         - --cookie-secret-file=/etc/proxy/secrets/session-secret
         - --openshift-service-account={{ .Values.oauthProxy.serviceAccountName }}
         - --skip-provider-button
-        - --skip-auth-regex=^/(manifest\.json|favicon\.ico|static/.*|js/.*|css/.*|images/.*|locales/.*|fonts/.*)$
+        - --skip-auth-regex=^/(manifest\.json|favicon\.ico|.*\.(js|css|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot|ico)|static/.*|js/.*|css/.*|images/.*|locales/.*|fonts/.*)$
 {{- if .Values.oauthProxy.enableRBAC }}
         - --openshift-sar={"namespace":"{{ .Release.Namespace }}","resource":"services","verb":"get"}
 {{- end }}
